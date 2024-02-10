@@ -31,7 +31,7 @@ The initial results of the data processing and analysis include:
 ### Reflection
 The process of working with real-world data has been educational and insightful. It has provided practical experience in data handling, analysis, and visualization.
 
-## Conclusion (So Far)
+## Conclusion (so far)
 In conclusion, this project represents a valuable learning experience in the field of data processing and analysis. It highlights the importance of applying theoretical knowledge to real-world problems and the iterative nature of the development process. Moving forward, the project will continue to evolve, incorporating feedback, addressing challenges, and striving for excellence.
 
 ## Work in Progress
