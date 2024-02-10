@@ -45,7 +45,7 @@ pip install pandas tabulate
 ```
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](www.google.com) file for details.
+This repository is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 - University of Abertay, Dundee, for providing the educational resources and support.
