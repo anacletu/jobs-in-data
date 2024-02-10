@@ -1,9 +1,11 @@
 import csv
 import locale
 import pandas as pd
+from forex_python.converter import CurrencyRates
 from tabulate import tabulate
 
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+c = CurrencyRates()
 
 
 def main():
@@ -105,11 +107,10 @@ def treat_data(data):
     This function treats the data, removing any unnecessary columns and renaming the columns
     """
     try:
-        columns_to_remove = ["work_year", "job_title", "company_size"]
+        columns_to_remove = ["work_year", "job_title", "salary_currency", "company_size"]
         data.drop(columns=columns_to_remove, inplace=True)
 
-        data.rename(columns={"job_category": "Job category", 
-                             "salary_currency": "Local currency", 
+        data.rename(columns={"job_category": "Job category",
                              "employee_residence": "Country", 
                              "experience_level": "Experience level", 
                              "employment_type": "Employment type", 
@@ -117,7 +118,7 @@ def treat_data(data):
                              "company_location": "Company location", 
                              "salary_in_usd": "Salary in USD", 
                              "salary": "Salary in local currency"}, inplace=True)
-                           
+                                      
         return data  # Return the modified DataFrame
         
     except KeyError as e:
@@ -213,7 +214,7 @@ def get_country_info(data, country):
         print(tabulate(country_info, headers="keys", tablefmt="pretty"))
 
 
-def get_country_summary(data, country):
+def get_country_summary(data, country, currency="USD"):
     """
     This function gets the summary of a specific country
     """
@@ -227,15 +228,38 @@ def get_country_summary(data, country):
         if country_info.empty:
             print(f"No data found for {country}.")
             return
-        summary = country_info.describe()
-        print(tabulate(summary, headers="keys", tablefmt="pretty"))
+        if currency != "USD":
+            try:
+                country_info["Salary in USD"] = country_info["Salary in USD"].apply(
+                lambda x: c.convert("USD", currency, x)
+                )
+            except Exception as e:
+                print(f"Error converting currency: {e}")
+                return
+        
+        average_salary = country_info["Salary in USD"].mean()
+        number_of_responses = country_info.shape[0]
+        
+        summary = {
+            "Country": country,
+            "Average Salary": format_currency(average_salary, currency),
+            "Number of Responses": number_of_responses,
+        }
+        print(tabulate([summary], headers="keys", tablefmt="pretty"))
+
+        next_currency = input("\nIf you want to see the information in another currency, type the proper abbreviation (e.g. EUR) else type Enter.\n")
+        if next_currency:
+            get_country_summary(data, country, next_currency)
 
 
-def format_currency(salary):
+def format_currency(amount, currency="USD"):
     """
     Function to format salary as currency
     """
-    return locale.currency(salary, grouping=True)
+    if currency == "USD":
+        return locale.currency(amount, grouping=True, symbol=True)
+    else:
+        return "{:,.2f} {}".format(amount, currency)
 
 
 if __name__ == "__main__":

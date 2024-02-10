@@ -41,7 +41,7 @@ Please note that this project is still a work in progress. Contributions, feedba
 To run this project, you'll need Python 3.x installed on your machine. You can install the required dependencies using pip:
 
 ```bash
-pip install pandas tabulate
+pip install pandas tabulate forex-python
 ```
 
 ## License
