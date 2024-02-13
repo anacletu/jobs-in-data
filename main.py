@@ -1,6 +1,7 @@
 import csv
 import locale
 import pandas as pd
+import os
 from forex_python.converter import CurrencyRates
 from tabulate import tabulate
 
@@ -50,7 +51,8 @@ def main():
         else:
             break
         input("Press Enter to continue...\n")
-
+        
+        os.system("clear") # clear the terminal screen
 
 def get_data_pd():
     """
