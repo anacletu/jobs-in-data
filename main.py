@@ -2,6 +2,7 @@ import csv
 import locale
 import pandas as pd
 import os
+import platform
 from forex_python.converter import CurrencyRates
 from tabulate import tabulate
 
@@ -10,14 +11,48 @@ c = CurrencyRates()
 
 
 def main():
+    df = initialize_dataset()
+    data_obj = treat_data(df)  # treating the dataframe
+
+    while True:
+        action_to_perform = get_user_input()
+        match action_to_perform:  # match statement is not supported in versions of Python prior to 3.10
+            case 1:
+                get_average_salary(data_obj)
+            case 2:
+                get_average_salary_by_country(data_obj)
+            case 3:
+                country = input("Type the desired country: ")
+                get_country_info(data_obj, country)
+            case 4:
+                country = input("Type the desired country: ")
+                get_country_summary(data_obj, country)
+            case _:
+                break
+        input("Press Enter to continue...\n")
+
+        if platform.system() == "Windows":
+            os.system("cls")
+        else:
+            os.system("clear")
+
+
+def initialize_dataset():
+    """
+    This function opens the db using diffente methods for demonstration purposes,
+    prints some basic information about it and returns the data as a pandas dataframe
+    for further processing
+    """
+
     # using the built-in file reading function to read the data
     data_file = get_data_file()
     total_lines = len(data_file)
-    
+
     print("\n************")
-    print(f"Total number of lines: {total_lines} using file reading function - this method counts the header as a line")
-    
-    
+    print(
+        f"Total number of lines: {total_lines} using file reading function - this method counts the header as a line"
+    )
+
     # using the pandas library to read the data (installation required: pip install pandas)
     data_obj = get_data_pd()
     total_lines = data_obj.shape[0]
@@ -33,30 +68,13 @@ def main():
     print(f"Total number of lines: {total_lines} using csv library")
     print("************\n")
 
-    # treating the data
-    data_obj = treat_data(data_obj)
-    
-    while True:
-        action_to_perform = get_user_input()
-        if action_to_perform == 1:
-            get_average_salary(data_obj)
-        elif action_to_perform == 2:
-            get_average_salary_by_country(data_obj)
-        elif action_to_perform == 3:
-            country = input("Type the desired country: ")
-            get_country_info(data_obj, country)
-        elif action_to_perform == 4:
-            country = input("Type the desired country: ")
-            get_country_summary(data_obj, country)
-        else:
-            break
-        input("Press Enter to continue...\n")
-        
-        os.system("clear") # clear the terminal screen
+    return data_obj
+
 
 def get_data_pd():
     """
-    This function reads the data from the jobs_in_data.csv file and returns it as a pandas dataframe
+    This function reads the data from the jobs_in_data.csv file
+    and returns it as a pandas dataframe
     """
     try:
         data = pd.read_csv("db/jobs_in_data.csv")
@@ -74,7 +92,8 @@ def get_data_pd():
 
 def get_data_file():
     """
-    This function reads the data from the jobs_in_data.csv file and returns it as a list
+    This function reads the data from the
+    jobs_in_data.csv file and returns it as a list
     """
     try:
         with open("db/jobs_in_data.csv", "r") as file:
@@ -90,7 +109,8 @@ def get_data_file():
 
 def get_data_csv():
     """
-    This function reads the data from the jobs_in_data.csv file and returns it as a list of dictionaries
+    This function reads the data from the jobs_in_data.csv
+    file and returns it as a list of dictionaries
     """
     try:
         with open("db/jobs_in_data.csv", "r") as file:
@@ -106,23 +126,34 @@ def get_data_csv():
 
 def treat_data(data):
     """
-    This function treats the data, removing any unnecessary columns and renaming the columns
+    This function treats the data, removing any
+    unnecessary columns and renaming the rest
     """
     try:
-        columns_to_remove = ["work_year", "job_title", "salary_currency", "company_size"]
+        columns_to_remove = [
+            "work_year",
+            "job_title",
+            "salary_currency",
+            "company_size",
+        ]
         data.drop(columns=columns_to_remove, inplace=True)
 
-        data.rename(columns={"job_category": "Job category",
-                             "employee_residence": "Country", 
-                             "experience_level": "Experience level", 
-                             "employment_type": "Employment type", 
-                             "work_setting": "Work setting", 
-                             "company_location": "Company location", 
-                             "salary_in_usd": "Salary in USD", 
-                             "salary": "Salary in local currency"}, inplace=True)
-                                      
+        data.rename(
+            columns={
+                "job_category": "Job category",
+                "employee_residence": "Country",
+                "experience_level": "Experience level",
+                "employment_type": "Employment type",
+                "work_setting": "Work setting",
+                "company_location": "Company location",
+                "salary_in_usd": "Salary in USD",
+                "salary": "Salary in local currency",
+            },
+            inplace=True,
+        )
+
         return data  # Return the modified DataFrame
-        
+
     except KeyError as e:
         print(f"Error: {e}. One or more columns to remove or rename were not found.")
         return None
@@ -178,9 +209,7 @@ def get_average_salary_by_country(data):
     """
     formatted_data = []
     try:
-        average_salary_by_country = data.groupby("Country")[
-            "Salary in USD"
-        ].mean()
+        average_salary_by_country = data.groupby("Country")["Salary in USD"].mean()
     except KeyError:
         print("Column data not found.")
     except Exception as e:
@@ -208,17 +237,22 @@ def get_country_info(data, country):
         if country_info.empty:
             print(f"No data found for {country}.")
             return
-        
+
         # Format as currency
-        country_info["Salary in USD"] = country_info["Salary in USD"].apply(format_currency)
-        country_info["Salary in local currency"] = country_info["Salary in local currency"].apply(format_currency)
-        
+        country_info["Salary in USD"] = country_info["Salary in USD"].apply(
+            format_currency
+        )
+        country_info["Salary in local currency"] = country_info[
+            "Salary in local currency"
+        ].apply(format_currency)
+
         print(tabulate(country_info, headers="keys", tablefmt="pretty"))
 
 
 def get_country_summary(data, country, currency="USD"):
     """
-    This function gets the summary of a specific country
+    This function gets the summary of a specific country.
+    In addition, it allows the user to convert the currency as desired.
     """
     try:
         country_info = data[data["Country"] == country].copy()
@@ -233,15 +267,15 @@ def get_country_summary(data, country, currency="USD"):
         if currency != "USD":
             try:
                 country_info["Salary in USD"] = country_info["Salary in USD"].apply(
-                lambda x: c.convert("USD", currency, x)
+                    lambda x: c.convert("USD", currency, x)
                 )
             except Exception as e:
                 print(f"Error converting currency: {e}")
                 return
-        
+
         average_salary = country_info["Salary in USD"].mean()
         number_of_responses = country_info.shape[0]
-        
+
         summary = {
             "Country": country,
             "Average Salary": format_currency(average_salary, currency),
@@ -249,7 +283,9 @@ def get_country_summary(data, country, currency="USD"):
         }
         print(tabulate([summary], headers="keys", tablefmt="pretty"))
 
-        next_currency = input("\nIf you want to see the information in another currency, type the proper abbreviation (e.g. EUR) else type Enter.\n")
+        next_currency = input(
+            "\nIf you want to see the information in another currency, type the proper abbreviation (e.g. EUR) else type Enter.\n"
+        )
         if next_currency:
             get_country_summary(data, country, next_currency)
 
