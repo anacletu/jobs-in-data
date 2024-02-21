@@ -12,7 +12,10 @@ c = CurrencyRates()
 
 def main():
     df = initialize_dataset()
-    data_obj = treat_data(df)  # treating the dataframe
+    data_obj = treat_axis(
+        df
+    )  # treating the dataframe along its axis to enhance readability
+    removed = False  # flag to control the removal of outliers
 
     while True:
         action_to_perform = get_user_input()
@@ -27,9 +30,29 @@ def main():
             case 4:
                 country = input("Type the desired country: ")
                 get_country_summary(data_obj, country)
+            case 5:
+                if not removed:
+                    z_score_from_user = input(
+                        "Inform the desired threshold for the Z-score method (default is 3): "
+                    )
+                    try:
+                        z_score_from_user = float(z_score_from_user)
+                    except ValueError:
+                        print("Invalid threshold. Using default value.")
+                        z_score_from_user = 3
+                    outliers = detect_outliers(data_obj, z_score_from_user)
+                    print(tabulate(outliers, headers="keys", tablefmt="pretty"))
+                    print(f"\nTotal number of outliers: {outliers.shape[0]}\n")
+                    print(f"Do you want to remove the outliers from the dataset?")
+                    rmv_outliers = input("Type 'yes' or 'no': ")
+                    removed, data_obj = remove_outliers(
+                        rmv_outliers, data_obj, outliers
+                    )
+                else:
+                    print("Outliers already removed.")
             case _:
                 break
-        input("Press Enter to continue...\n")
+        input("\nPress Enter to continue...\n")
 
         if platform.system() == "Windows":
             os.system("cls")
@@ -39,8 +62,8 @@ def main():
 
 def initialize_dataset():
     """
-    This function opens the db using diffente methods for demonstration purposes,
-    prints some basic information about it and returns the data as a pandas dataframe
+    This function calls diffente functions to open a db for demonstration purposes,
+    prints some basic information about it and returns the data to the caller as a Pandas DataFrame
     for further processing
     """
 
@@ -124,16 +147,17 @@ def get_data_csv():
         return None
 
 
-def treat_data(data):
+def treat_axis(data):
     """
-    This function treats the data, removing any
-    unnecessary columns and renaming the rest
+    This function is responsible for making the data more readable
+    by, for example, renaming and removing unnecessary columns
     """
     try:
         columns_to_remove = [
             "work_year",
             "job_title",
             "salary_currency",
+            "salary",
             "company_size",
         ]
         data.drop(columns=columns_to_remove, inplace=True)
@@ -147,7 +171,6 @@ def treat_data(data):
                 "work_setting": "Work setting",
                 "company_location": "Company location",
                 "salary_in_usd": "Salary in USD",
-                "salary": "Salary in local currency",
             },
             inplace=True,
         )
@@ -171,7 +194,8 @@ def get_user_input():
         "2. Check the average salary by country",
         "3. Type a country to see all available data",
         "4. Type a country to see a summary of the data",
-        "5. Exit",
+        "5. Detect outliers using Z-score method",
+        "6. Exit",
     ]  # future actions will be added here
     options_text = "\n".join(options)
     action = input(f"Type the number of the desired action: \n\n{options_text}\n")
@@ -298,6 +322,47 @@ def format_currency(amount, currency="USD"):
         return locale.currency(amount, grouping=True, symbol=True)
     else:
         return "{:,.2f} {}".format(amount, currency)
+
+
+def detect_outliers(data, threshold=3):
+    """
+    This function checks for outliers in the data using Z-score method.
+    The threshold is set to 3 by default.
+    """
+    try:
+        z_scores = data["Salary in USD"].apply(
+            lambda x: (x - data["Salary in USD"].mean()) / data["Salary in USD"].std()
+        )
+        outliers = data[abs(z_scores) > threshold]
+        return outliers
+    except KeyError:
+        print("Salary in USD column not found.")
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+
+def remove_outliers(rmv_outliers, data, outliers=None, removed=False):
+    """
+    This function removes the outliers from the dataset
+    """
+    if rmv_outliers.lower().strip() in ["yes", "y"]:
+        confirmation = input(
+            "Are you sure you want to remove the outliers from the dataset? Type 'yes' or 'no': "
+        )
+        if confirmation.lower().strip() in ["yes", "y"]:
+            filtered_data = data[~data.index.isin(outliers.index)]
+            print("Outliers removed.")
+            removed = True
+            return removed, filtered_data
+        else:
+            print("Outliers not removed.")
+            return removed, data
+    elif rmv_outliers.lower().strip() in ["no", "n"]:
+        print("Outliers not removed.")
+    else:
+        print("Invalid input. Outliers not removed.")
 
 
 if __name__ == "__main__":
