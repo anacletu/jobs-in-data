@@ -232,7 +232,7 @@ def group_by_job_category(data):
             input(
                 "\nIf you want to isolate one country, specify it. Else press Enter to continue.\n"
             )
-            .capitalize()
+            .title()
             .strip()
         )
         if filter_country:

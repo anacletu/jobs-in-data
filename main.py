@@ -27,7 +27,7 @@ def main():
             case 3:
                 get_average_salary_by_country(data_obj)
             case 4:
-                country = input("Type the desired country: ").capitalize().strip()
+                country = input("Type the desired country: ").title().strip()
                 country_info = get_country_info(data_obj, country)
                 if country_info is not None:
                     download_data = input(
@@ -38,7 +38,7 @@ def main():
             case 5:
                 group_by_job_category(data_obj)
             case 6:
-                country = input("Type the desired country: ").capitalize().strip()
+                country = input("Type the desired country: ").title().strip()
                 get_country_summary(data_obj, country)
             case 7:
                 if not removed:
