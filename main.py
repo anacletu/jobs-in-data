@@ -35,12 +35,18 @@ def main():
             case 3:
                 get_average_salary_by_country(data_obj)
             case 4:
-                country = input("Type the desired country: ")
-                get_country_info(data_obj, country)
+                country = input("Type the desired country: ").capitalize().strip()
+                country_info = get_country_info(data_obj, country)
+                if country_info is not None:
+                    download_data = input(
+                        "Would like to export the data for this country? Type 'yes' or press Enter to continue: "
+                    )
+                    if download_data:
+                        export_country_data(country_info, download_data, country)
             case 5:
                 group_by_job_category(data_obj)
             case 6:
-                country = input("Type the desired country: ")
+                country = input("Type the desired country: ").capitalize().strip()
                 get_country_summary(data_obj, country)
             case 7:
                 if not removed:
@@ -214,7 +220,7 @@ def get_user_input():
     options = "\n".join(options_for_the_user)
     user_action = input(
         f"What would you like to do? Type the corresponding number: \n\n{options}\n"
-    )
+    ).strip()
     try:
         action = int(user_action)
     except ValueError:
@@ -237,7 +243,6 @@ def get_average_salary(data):
         average_salary = data["Salary in USD"].mean()
     except KeyError:
         print("Data not found.")
-        return
     else:
         formatted_salary = format_currency(average_salary)
         print(f"\nThe average salary in USD is: {formatted_salary} per year.")
@@ -254,7 +259,6 @@ def get_average_salary_by_country(data):
         average_salary_by_country = data.groupby("Country")["Salary in USD"].mean()
     except KeyError:
         print("Data not found.")
-        return
     else:
         formatted_data = []
         for country, salary in average_salary_by_country.items():
@@ -287,14 +291,17 @@ def group_by_job_category(data):
         )
     except:
         print("Failed to group the data.")
-        return
     else:
         grouped_data["Salary in USD"] = grouped_data["Salary in USD"].apply(
             format_currency
         )
         print(tabulate(grouped_data, headers="keys", tablefmt="pretty"))
-        filter_country = input(
-            "\nIf you want to isolate one country, specify it. Else press Enter to continue.\n"
+        filter_country = (
+            input(
+                "\nIf you want to isolate one country, specify it. Else press Enter to continue.\n"
+            )
+            .capitalize()
+            .strip()
         )
         if filter_country:
             filtered_data = grouped_data.loc[grouped_data["Country"] == filter_country]
@@ -302,7 +309,6 @@ def group_by_job_category(data):
                 print("Country not found.")
             else:
                 print(tabulate(filtered_data, headers="keys", tablefmt="pretty"))
-                return
 
 
 def get_country_info(data, country):
@@ -314,18 +320,33 @@ def get_country_info(data, country):
         country_info = data[data["Country"] == country].copy()
     except KeyError:
         print("Country not found.")
-        return
+        return None
     else:
         if country_info.empty:
             print(f"No data found for {country}.")
-            return
+            return None
 
         # Format the salary as currency
         country_info["Salary in USD"] = country_info["Salary in USD"].apply(
             format_currency
         )
-
         print(tabulate(country_info, headers="keys", tablefmt="pretty"))
+        return country_info
+
+
+def export_country_data(data, download_data, country):
+    """
+    This function exports the data of a specific country
+    to a CSV file
+    args: data (DataFrame), download_data (str)
+    """
+    if download_data in ["yes", "y", "yeah", "yep", "sure", "ok"]:
+        try:
+            data.to_csv(f"{country}_data.csv", index=False)
+        except:
+            print("Failed to export the data.")
+        else:
+            print(f"{country}_data.csv file created.")
 
 
 def get_country_summary(data, country, currency="USD"):
@@ -341,11 +362,9 @@ def get_country_summary(data, country, currency="USD"):
         ].copy()  # using the copy method in case the user wants to convert the currency (keeping the original data intact)
     except KeyError:
         print("Country not found.")
-        return
     else:
         if country_info.empty:
             print(f"No data found for {country}.")
-            return
         if currency != "USD":
             try:
                 country_info["Salary in USD"] = country_info["Salary in USD"].apply(
@@ -358,7 +377,6 @@ def get_country_summary(data, country, currency="USD"):
                     )  # plan B in case python-forex is not working, it goes offline sometimes
                 except:
                     print("Error converting currency")
-                    return
 
         average_salary = country_info["Salary in USD"].mean()
         number_of_responses = country_info.shape[0]
@@ -378,8 +396,12 @@ def get_country_summary(data, country, currency="USD"):
         }
         print(tabulate([summary], headers="keys", tablefmt="pretty"))
 
-        other_currency = input(
-            "\nIf you want to see the information in another currency, type the proper abbreviation (e.g. EUR) else press Enter.\n"
+        other_currency = (
+            input(
+                "\nIf you want to see the information in another currency, type the proper abbreviation (e.g. EUR) else press Enter.\n"
+            )
+            .upper()
+            .strip()
         )
         if other_currency:
             get_country_summary(data, country, other_currency)
@@ -475,8 +497,12 @@ def restore_dateset(removed, data, dataframe):
     if not removed:
         print("No changes were made to the dataset.")
     else:
-        ans = input(
-            "Are you sure you want to restore the original data? Type 'yes' to confirm or Enter to continue. "
+        ans = (
+            input(
+                "Are you sure you want to restore the original data? Type 'yes' to confirm or Enter to continue. "
+            )
+            .lower()
+            .strip()
         )
         if ans in ["yes", "y", "yeah", "sure"]:
             removed = False
