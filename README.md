@@ -12,7 +12,7 @@
 ## Introduction
 This repository contains a Python application developed as part of the 'Fundamentals of Computing' course's final assignment in my pursuit of an MS in CS. The project aims to analyze a dataset related to jobs in the field of data science, extracting insights such as salary trends, job frequency, and correlations between variables. The application utilizes both built-in Python tools and external libraries to improve programming flexibility and facilitate result comparison, which can be achieved by running the included test file.
 
-![Program Gif](/game/screenshot/game_gif.gif)
+![Program Gif](/app/screenshot/app_gif.gif)
 
 ## Data Processing
 The main objective of this project is to process data from a csv file containing job-related information. The data processing pipeline involves several steps:
