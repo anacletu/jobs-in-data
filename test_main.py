@@ -4,13 +4,15 @@ warnings.filterwarnings(
     "ignore", category=DeprecationWarning
 )  # importing first to ignore warnings from pandas
 
+from classes import VanillaPythonAnalysis
+from functions import *
+
 import numpy as np
 import pandas as pd
-from main import VanillaPythonAnalysis
 
 
-data_file = pd.read_csv("db/jobs_in_data.csv")
-analysis = VanillaPythonAnalysis("db/jobs_in_data.csv")
+data_file = get_data_pd()
+analysis = VanillaPythonAnalysis(file_path)
 
 
 def test_mean_salary():

@@ -61,7 +61,7 @@ def main():
                 else:
                     print("Outliers already removed.")
             case 8:
-                vanilla_analyzer = VanillaPythonAnalysis("db/jobs_in_data.csv")
+                vanilla_analyzer = VanillaPythonAnalysis(file_path)
                 vanilla_analyzer.get_insights()
             case 9:
                 removed, data_obj = restore_dateset(removed, data_obj, df)

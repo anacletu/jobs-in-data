@@ -1,5 +1,6 @@
 import csv
 import locale
+import os
 import requests
 
 import pandas as pd
@@ -9,10 +10,13 @@ from forex_python.converter import CurrencyRates
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 c = CurrencyRates()
 
+currenty_dir = os.path.dirname(__file__)
+file_path = os.path.join(currenty_dir, "dataset", "jobs_in_data.csv")
+
 
 def get_total_lines(data, removed=False):
     """
-    This function calls different ways to open a db for demonstration purposes
+    This function calls different ways to open a dataset for demonstration purposes
     and prints the total number of lines in the csv file
     args: removed (bool) - if the outliers have been removed or not (yet)
     """
@@ -50,7 +54,7 @@ def get_data_pd():
     and returns it as a DataFrame
     """
     try:
-        data = pd.read_csv("db/jobs_in_data.csv")
+        data = pd.read_csv(file_path)
     except FileNotFoundError:
         print("File not found.")
         return None
@@ -67,7 +71,7 @@ def get_data_file():
     jobs_in_data.csv file and returns it as a list
     """
     try:
-        with open("db/jobs_in_data.csv", "r") as file:
+        with open(file_path, "r") as file:
             data = file.readlines()
     except FileNotFoundError:
         print("File not found.")
@@ -85,7 +89,7 @@ def get_data_csv():
     file and returns it as a list of dictionaries
     """
     try:
-        with open("db/jobs_in_data.csv", "r") as file:
+        with open(file_path, "r") as file:
             data = list(csv.DictReader(file))
     except FileNotFoundError:
         print("File not found.")
