@@ -36,13 +36,13 @@ Engaging in data analysis provides invaluable educational insights into prevalen
 
 ## Features
 - **Data Visualization**: The application provides interactive visualizations to help users better understand the dataset. Users can choose from various visualization options, which are displayed with the support of the tabulate library.
-- **Currency Conversion**: The application supports real-time currency conversion for salary data. Users can select their preferred currency, and the application will convert salary values accordingly. For reliability and redundancy, two conversion methods were implemented: API and forex lib.
-- **Export Capabilities**: Users can export analysis results and visualizations to csv files for further analysis or reporting purposes.
-- **User Interaction**: The application offers a user-friendly interface with prompts and menus to guide users through the process. Users can select analysis options and filter data. For improved visibility, the terminal window is refreshed with each interaction.
+- **Currency Conversion**: The application supports real-time currency conversion for salary data. Users can select their preferred currency, and the application will convert salary values accordingly. For reliability and redundancy, two conversion methods were implemented: Exchange Rate API and forex-python lib.
+- **Export Capabilities**: Users can export results to a csv file for further analysis or reporting purposes.
+- **User Interaction**: The application offers a CLI interface with prompts and menus to guide users through the process. Users can select analysis options and filter data. For improved visibility, the terminal window is refreshed with each interaction.
 - **Error Handling**: The application includes robust error handling to ensure smooth operation even in the face of unexpected input or errors.
 - **Modular Design**: The codebase is modular and well-organized, making it easy to maintain, extend, and debug. Each functionality is encapsulated in separate modules or classes, promoting code reusability and scalability.
 - **Unit Testing**: The project includes comprehensive unit tests to verify the correctness of key functions and ensure reliable performance. Testing is automated using pytest, allowing for efficient regression testing and code validation.
-- **Documentation**: The codebase is thoroughly documented with inline comments and docstrings, providing insights into the functionality of each module, class, and function.
+- **Documentation**: The codebase is documented with inline comments and docstrings, providing insights into the functionality of each module, class, and function.
 
 ## Installation Instructions
 To run this project, you'll need Python 3.10 or above installed on your machine. You can install the required dependencies using pip:
