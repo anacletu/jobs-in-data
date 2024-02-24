@@ -12,10 +12,12 @@
 ## Introduction
 This repository contains a Python application developed as part of the 'Fundamentals of Computing' course's final assignment in my pursuit of an MS in CS. The project aims to analyze a dataset related to jobs in the field of data science, extracting insights such as salary trends, job frequency, and correlations between variables. The application utilizes both built-in Python tools and external libraries to improve programming flexibility and facilitate result comparison, which can be achieved by running the included test file.
 
-## Data Processing
-The main objective of this project is to process data from a CSV file containing job-related information. The data processing pipeline involves several steps:
+![Program Gif](/game/screenshot/game_gif.gif)
 
-- **Data Retrieval**: The project retrieves the job data from a CSV file using various methods including built-in file reading, pandas library, and csv library.
+## Data Processing
+The main objective of this project is to process data from a csv file containing job-related information. The data processing pipeline involves several steps:
+
+- **Data Retrieval**: The project retrieves the job data from a csv file using various methods including built-in file reading, pandas library, and csv library.
 - **Data Treatment**: After retrieving the data, the following actions are taken:
     - Unnecessary columns are removed.
     - Remaining columns are renamed for clarity and consistency.
@@ -35,7 +37,7 @@ Engaging in data analysis provides invaluable educational insights into prevalen
 ## Features
 - **Data Visualization**: The application provides interactive visualizations to help users better understand the dataset. Users can choose from various visualization options, which are displayed with the support of the tabulate library.
 - **Currency Conversion**: The application supports real-time currency conversion for salary data. Users can select their preferred currency, and the application will convert salary values accordingly. For reliability and redundancy, two conversion methods were implemented: API and forex lib.
-- **Export Capabilities**: Users can export analysis results and visualizations to CSV files for further analysis or reporting purposes.
+- **Export Capabilities**: Users can export analysis results and visualizations to csv files for further analysis or reporting purposes.
 - **User Interaction**: The application offers a user-friendly interface with prompts and menus to guide users through the process. Users can select analysis options and filter data. For improved visibility, the terminal window is refreshed with each interaction.
 - **Error Handling**: The application includes robust error handling to ensure smooth operation even in the face of unexpected input or errors.
 - **Modular Design**: The codebase is modular and well-organized, making it easy to maintain, extend, and debug. Each functionality is encapsulated in separate modules or classes, promoting code reusability and scalability.

@@ -10,8 +10,9 @@ from forex_python.converter import CurrencyRates
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 c = CurrencyRates()
 
-currenty_dir = os.path.dirname(__file__)
-file_path = os.path.join(currenty_dir, "dataset", "jobs_in_data.csv")
+current_dir = os.path.dirname(__file__)
+parent_dir = os.path.dirname(current_dir)
+file_path = os.path.join(parent_dir, "dataset", "jobs_in_data.csv")
 
 
 def get_total_lines(data, removed=False):
